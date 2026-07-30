@@ -5,25 +5,26 @@ import './App.css';
 function App() {
   const [character, setCharacter] = useState(initialCharacterState);
 
-  // Функция для изменения характеристик (принимает имя стата и направление: +1 или -1)
+  // Функция для изменения характеристик (осталась прежней)
   const changeStat = (statName, amount) => {
-    // Защита 1: Если нажимают "+", но свободных очков больше нет — ничего не делаем
     if (amount === 1 && character.availablePoints === 0) return;
-
-    // Защита 2: Если нажимают "-", но характеристика уже на минимуме (10) — ничего не делаем
     if (amount === -1 && character.stats[statName] === 10) return;
 
-    // Обновляем состояние персонажа
     setCharacter((prev) => ({
       ...prev,
-      // Уменьшаем или увеличиваем свободные очки на величину amount (1 или -1)
       availablePoints: prev.availablePoints - amount,
-      // Обновляем конкретную характеристику внутри вложенного объекта stats
       stats: {
         ...prev.stats,
-        // Динамически находим нужный стат по его имени и прибавляем/вычитаем amount
         [statName]: prev.stats[statName] + amount,
       },
+    }));
+  };
+
+  // Новая функция для обработки изменений в простых полях (Раса, Класс)
+  const handleInputChange = (fieldName, value) => {
+    setCharacter((prev) => ({
+      ...prev,
+      [fieldName]: value, // динамически меняем либо 'race', либо 'class'
     }));
   };
 
@@ -32,7 +33,38 @@ function App() {
       <h1>Генератор Персонажа RPG</h1>
 
       <div className="creator-card">
-        {/* Отображаем пул доступных очков */}
+        
+        {/* НОВЫЙ БЛОК: Выбор Расы и Класса */}
+        <div className="dropdowns-container">
+          <div className="form-group">
+            <label htmlFor="race-select">🧬 Выберите расу: </label>
+            <select 
+              id="race-select"
+              value={character.race}
+              onChange={(e) => handleInputChange('race', e.target.value)}
+            >
+              <option value="human">Человек</option>
+              <option value="elf">Эльф</option>
+              <option value="dwarf">Гном</option>
+              <option value="orc">Орк</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="class-select">🛡️ Выберите класс: </label>
+            <select 
+              id="class-select"
+              value={character.class}
+              onChange={(e) => handleInputChange('class', e.target.value)}
+            >
+              <option value="warrior">Воин</option>
+              <option value="mage">Маг</option>
+              <option value="rogue">Плут</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Пул доступных очков */}
         <div className="points-pool">
           <h3>Доступные очки: {character.availablePoints}</h3>
         </div>
@@ -41,7 +73,6 @@ function App() {
         <div className="stats-container">
           {Object.keys(character.stats).map((stat) => (
             <div key={stat} className="stat-row">
-              {/* Переводим системные имена характеристик на русский язык */}
               <span className="stat-label">
                 {stat === 'strength' && '⚔️ Сила'}
                 {stat === 'agility' && '🏹 Ловкость'}
@@ -51,14 +82,18 @@ function App() {
               </span>
               
               <div className="stat-buttons">
-                {/* Кнопка минус */}
                 <button onClick={() => changeStat(stat, -1)}>-</button>
-                {/* Кнопка плюс */}
                 <button onClick={() => changeStat(stat, 1)}>+</button>
               </div>
             </div>
           ))}
         </div>
+
+        {/* Временный дебаг-блок, чтобы видеть, что стейт меняется */}
+        <div className="debug-preview" style={{ marginTop: '20px', fontSize: '12px', color: '#888' }}>
+          Выбрано в стейте: Раса — {character.race}, Класс — {character.class}
+        </div>
+
       </div>
     </div>
   );
