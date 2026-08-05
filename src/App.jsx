@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { initialCharacterState } from './initialState';
-import './App.css';
+import { useState } from "react";
+import { initialCharacterState } from "./initialState";
+import "./App.css";
 
 function App() {
   const [character, setCharacter] = useState(initialCharacterState);
 
-  // Функция для изменения характеристик (осталась прежней)
+  // Изменение характеристик (без изменений)
   const changeStat = (statName, amount) => {
     if (amount === 1 && character.availablePoints === 0) return;
     if (amount === -1 && character.stats[statName] === 10) return;
@@ -20,12 +20,23 @@ function App() {
     }));
   };
 
-  // Новая функция для обработки изменений в простых полях (Раса, Класс)
+  // Универсальный обработчик для имени, расы и класса (теперь обрабатывает и текст)
   const handleInputChange = (fieldName, value) => {
     setCharacter((prev) => ({
       ...prev,
-      [fieldName]: value, // динамически меняем либо 'race', либо 'class'
+      [fieldName]: value,
     }));
+  };
+
+  // Валидация: проверяем, заполнено ли имя и распределены ли все очки (осталось 0)
+  const isFormInvalid =
+    character.name.trim() === "" || character.availablePoints > 0;
+
+  // Функция имитации сохранения (пока просто выводим в консоль)
+  const handleSave = () => {
+    if (isFormInvalid) return; // дополнительная защита
+    console.log("Персонаж успешно создан и готов к сохранению:", character);
+    alert(`Персонаж ${character.name} успешно создан!`);
   };
 
   return (
@@ -33,15 +44,26 @@ function App() {
       <h1>Генератор Персонажа RPG</h1>
 
       <div className="creator-card">
-        
-        {/* НОВЫЙ БЛОК: Выбор Расы и Класса */}
+        {/* НОВЫЙ БЛОК: Ввод имени */}
+        <div className="form-group name-group">
+          <label htmlFor="char-name">✍️ Имя персонажа: </label>
+          <input
+            id="char-name"
+            type="text"
+            placeholder="Введите имя героя..."
+            value={character.name}
+            onChange={(e) => handleInputChange("name", e.target.value)}
+          />
+        </div>
+
+        {/* Выбор Расы и Класса */}
         <div className="dropdowns-container">
           <div className="form-group">
             <label htmlFor="race-select">🧬 Выберите расу: </label>
-            <select 
+            <select
               id="race-select"
               value={character.race}
-              onChange={(e) => handleInputChange('race', e.target.value)}
+              onChange={(e) => handleInputChange("race", e.target.value)}
             >
               <option value="human">Человек</option>
               <option value="elf">Эльф</option>
@@ -52,10 +74,10 @@ function App() {
 
           <div className="form-group">
             <label htmlFor="class-select">🛡️ Выберите класс: </label>
-            <select 
+            <select
               id="class-select"
               value={character.class}
-              onChange={(e) => handleInputChange('class', e.target.value)}
+              onChange={(e) => handleInputChange("class", e.target.value)}
             >
               <option value="warrior">Воин</option>
               <option value="mage">Маг</option>
@@ -74,13 +96,13 @@ function App() {
           {Object.keys(character.stats).map((stat) => (
             <div key={stat} className="stat-row">
               <span className="stat-label">
-                {stat === 'strength' && '⚔️ Сила'}
-                {stat === 'agility' && '🏹 Ловкость'}
-                {stat === 'intelligence' && '🔮 Интеллект'}
-                {stat === 'wisdom' && '📜 Мудрость'}
+                {stat === "strength" && "⚔️ Сила"}
+                {stat === "agility" && "🏹 Ловкость"}
+                {stat === "intelligence" && "🔮 Интеллект"}
+                {stat === "wisdom" && "📜 Мудрость"}
                 {` (${character.stats[stat]})`}
               </span>
-              
+
               <div className="stat-buttons">
                 <button onClick={() => changeStat(stat, -1)}>-</button>
                 <button onClick={() => changeStat(stat, 1)}>+</button>
@@ -89,11 +111,16 @@ function App() {
           ))}
         </div>
 
-        {/* Временный дебаг-блок, чтобы видеть, что стейт меняется */}
-        <div className="debug-preview" style={{ marginTop: '20px', fontSize: '12px', color: '#888' }}>
-          Выбрано в стейте: Раса — {character.race}, Класс — {character.class}
+        {/* НОВАЯ КНОПКА: Сохранение персонажа */}
+        <div className="actions-container" style={{ marginTop: "20px" }}>
+          <button
+            onClick={handleSave}
+            disabled={isFormInvalid}
+            className="save-button"
+          >
+            Сохранить персонажа
+          </button>
         </div>
-
       </div>
     </div>
   );
