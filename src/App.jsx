@@ -17,6 +17,7 @@ function App() {
     // Если там пусто, берем дефолтный initialLibraryState
     return savedLibrary ? JSON.parse(savedLibrary) : initialLibraryState;
   });
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
   // Изменение характеристик
@@ -87,7 +88,9 @@ function App() {
   const isNameEmpty = character.name.trim() === "";
   const hasPointsLeft = character.availablePoints > 0;
   const isFormInvalid = isNameEmpty || hasPointsLeft;
-
+  const filteredLibrary = library.filter((hero) =>
+    hero.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
   const handleSave = () => {
     if (isFormInvalid) return;
 
@@ -267,8 +270,24 @@ function App() {
       </div>
       <div className="library-section" style={{ marginTop: "40px" }}>
         <h2>📚 Библиотека персонажей ({library.length})</h2>
+        <div className="search-container" style={{ marginBottom: "20px" }}>
+          <input
+            type="text"
+            placeholder="🔍 Поиск героя по имени..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "5px",
+              border: "1px solid #444",
+              backgroundColor: "#1a1a1a",
+              color: "#fff",
+            }}
+          />
+        </div>
 
-        {library.length === 0 ? (
+        {filteredLibrary.length === 0 ? (
           <p style={{ color: "#888", textAlign: "center" }}>
             Библиотека пуста. Создайте своего первого героя!
           </p>
@@ -282,7 +301,7 @@ function App() {
               marginTop: "20px",
             }}
           >
-            {library.map((hero) => (
+            {filteredLibrary.map((hero) => (
               <div
                 key={hero.id}
                 className="character-card"
