@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // Импортируем массивы для рандома
 import {
   initialCharacterState,
@@ -11,10 +11,19 @@ import "./App.css";
 
 function App() {
   const [character, setCharacter] = useState(initialCharacterState);
-  const [library, setLibrary] = useState(initialLibraryState);
+  const [library, setLibrary] = useState(() => {
+    const savedLibrary = localStorage.getItem("rpg_character_library");
+    // Если в хранилище что-то есть, превращаем строку обратно в массив.
+    // Если там пусто, берем дефолтный initialLibraryState
+    return savedLibrary ? JSON.parse(savedLibrary) : initialLibraryState;
+  });
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
-  // Изменение характеристик (без изменений)
+  // Изменение характеристик
+  useEffect(() => {
+    // Превращаем массив библиотеки в строку и бережно сохраняем в браузер
+    localStorage.setItem("rpg_character_library", JSON.stringify(library));
+  }, [library]); // Массив зависимостей: хук будет срабатывать каждый раз, когда меняется library
   const changeStat = (statName, amount) => {
     if (amount === 1 && character.availablePoints === 0) return;
     if (amount === -1 && character.stats[statName] === 10) return;
