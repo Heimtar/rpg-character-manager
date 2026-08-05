@@ -6,8 +6,9 @@ function App() {
   const [character, setCharacter] = useState(initialCharacterState);
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
-  // Изменение характеристик (без изменений)
+  // Изменение характеристик
   const changeStat = (statName, amount) => {
+    // Теперь защита стоит прямо на входе в функцию
     if (amount === 1 && character.availablePoints === 0) return;
     if (amount === -1 && character.stats[statName] === 10) return;
 
@@ -99,27 +100,52 @@ function App() {
 
         {/* Блок распределения характеристик */}
         <div className="stats-container">
-          {Object.keys(character.stats).map((stat) => (
-            <div key={stat} className="stat-row">
-              <span className="stat-label">
-                {stat === "strength" && "⚔️ Сила"}
-                {stat === "agility" && "🏹 Ловкость"}
-                {stat === "intelligence" && "🔮 Интеллект"}
-                {stat === "wisdom" && "📜 Мудрость"}
-                {` (${character.stats[stat]})`}
-              </span>
+          {Object.keys(character.stats).map((stat) => {
+            // Заранее вычисляем, заблокированы ли кнопки логически
+            const isMinusDisabled = character.stats[stat] <= 10;
+            const isPlusDisabled = character.availablePoints === 0;
 
-              <div className="stat-buttons">
-                <button onClick={() => changeStat(stat, -1)}>-</button>
-                <button onClick={() => changeStat(stat, 1)}>+</button>
+            return (
+              <div key={stat} className="stat-row">
+                <span className="stat-label">
+                  {stat === "strength" && "⚔️ Сила"}
+                  {stat === "agility" && "🏹 Ловкость"}
+                  {stat === "intelligence" && "🔮 Интеллект"}
+                  {stat === "wisdom" && "📜 Мудрость"}
+                  {` (${character.stats[stat]})`}
+                </span>
+
+                <div className="stat-buttons">
+                  {/* Кнопка минус */}
+                  <button
+                    onClick={() => changeStat(stat, -1)}
+                    style={{
+                      opacity: isMinusDisabled ? 0.4 : 1,
+                      cursor: isMinusDisabled ? "not-allowed" : "pointer",
+                    }}
+                    aria-label={`Уменьшить ${stat}`}
+                  >
+                    -
+                  </button>
+                  {/* Кнопка плюс */}
+                  <button
+                    onClick={() => changeStat(stat, 1)}
+                    style={{
+                      opacity: isPlusDisabled ? 0.4 : 1,
+                      cursor: isPlusDisabled ? "not-allowed" : "pointer",
+                    }}
+                    aria-label={`Увеличить ${stat}`}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Блок действий и динамической валидации */}
+        {/* Блок действий и валидации */}
         <div className="actions-container" style={{ marginTop: "20px" }}>
-          {/* ИЗМЕНЕННЫЙ БЛОК: Текстовый статус валидации (Красный / Зеленый) */}
           <div
             className="validation-status"
             style={{
@@ -136,7 +162,7 @@ function App() {
 
           <button
             onClick={handleSave}
-            disabled={isFormInvalid}
+            disabled={isFormInvalid} // Эту главную кнопку оставляем disabled по ТЗ
             className="save-button"
           >
             Сохранить персонажа
@@ -144,7 +170,7 @@ function App() {
         </div>
       </div>
 
-      {/* Модальное окно успешного сохранения */}
+      {/* Модальное окно */}
       {isSavedModalOpen && (
         <div
           className="modal-overlay"
