@@ -5,11 +5,13 @@ import {
   RANDOM_NAMES,
   RANDOM_RACES,
   RANDOM_CLASSES,
+  initialLibraryState,
 } from "./initialState";
 import "./App.css";
 
 function App() {
   const [character, setCharacter] = useState(initialCharacterState);
+  const [library, setLibrary] = useState(initialLibraryState);
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
   // Изменение характеристик (без изменений)
@@ -79,8 +81,30 @@ function App() {
 
   const handleSave = () => {
     if (isFormInvalid) return;
-    console.log("Персона年 успешно создан:", character);
+
+    const newCharacter = {
+      ...character,
+      id: crypto.randomUUID(), // встроенный в браузер генератор ID
+      createdAt: new Date().toLocaleDateString(),
+    };
+
+    setLibrary((prevLibrary) => [newCharacter, ...prevLibrary]);
     setIsSavedModalOpen(true);
+  };
+  const deleteCharacter = (id) => {
+    setLibrary((prevLibrary) => prevLibrary.filter((char) => char.id !== id));
+  };
+  const translate = (key) => {
+    const dictionary = {
+      human: "Человек",
+      elf: "Эльф",
+      dwarf: "Гном",
+      orc: "Орк",
+      warrior: "Воин",
+      mage: "Маг",
+      rogue: "Плут",
+    };
+    return dictionary[key] || key;
   };
 
   const closeSuccessModal = () => {
@@ -231,6 +255,92 @@ function App() {
             Сохранить персонажа
           </button>
         </div>
+      </div>
+      <div className="library-section" style={{ marginTop: "40px" }}>
+        <h2>📚 Библиотека персонажей ({library.length})</h2>
+
+        {library.length === 0 ? (
+          <p style={{ color: "#888", textAlign: "center" }}>
+            Библиотека пуста. Создайте своего первого героя!
+          </p>
+        ) : (
+          <div
+            className="library-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+              gap: "20px",
+              marginTop: "20px",
+            }}
+          >
+            {library.map((hero) => (
+              <div
+                key={hero.id}
+                className="character-card"
+                style={{
+                  backgroundColor: "#2a2a2a",
+                  padding: "20px",
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  position: "relative",
+                }}
+              >
+                <h3 style={{ margin: "0 0 10px 0", color: "#ffb13b" }}>
+                  {hero.name}
+                </h3>
+                <p style={{ margin: "5px 0", fontSize: "14px" }}>
+                  <strong>Раса:</strong> {translate(hero.race)}
+                </p>
+                <p style={{ margin: "5px 0", fontSize: "14px" }}>
+                  <strong>Класс:</strong> {translate(hero.class)}
+                </p>
+
+                <div
+                  className="hero-stats-preview"
+                  style={{
+                    marginTop: "10px",
+                    background: "#1a1a1a",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    fontSize: "13px",
+                  }}
+                >
+                  <div>⚔️ Сил: {hero.stats.strength}</div>
+                  <div>🏹 Лов: {hero.stats.agility}</div>
+                  <div>🔮 Инт: {hero.stats.intelligence}</div>
+                  <div>📜 Муд: {hero.stats.wisdom}</div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginTop: "15px",
+                  }}
+                >
+                  <span style={{ fontSize: "11px", color: "#666" }}>
+                    {hero.createdAt}
+                  </span>
+                  <button
+                    onClick={() => deleteCharacter(hero.id)}
+                    style={{
+                      backgroundColor: "#ff6b6b",
+                      color: "#fff",
+                      border: "none",
+                      padding: "5px 10px",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "12px",
+                    }}
+                  >
+                    🗑️ Удалить
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Модальное окно (без изменений) */}
