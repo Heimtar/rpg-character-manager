@@ -1,14 +1,19 @@
 import { useState } from "react";
-import { initialCharacterState } from "./initialState";
+// Импортируем массивы для рандома
+import {
+  initialCharacterState,
+  RANDOM_NAMES,
+  RANDOM_RACES,
+  RANDOM_CLASSES,
+} from "./initialState";
 import "./App.css";
 
 function App() {
   const [character, setCharacter] = useState(initialCharacterState);
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
-  // Изменение характеристик
+  // Изменение характеристик (без изменений)
   const changeStat = (statName, amount) => {
-    // Теперь защита стоит прямо на входе в функцию
     if (amount === 1 && character.availablePoints === 0) return;
     if (amount === -1 && character.stats[statName] === 10) return;
 
@@ -22,7 +27,7 @@ function App() {
     }));
   };
 
-  // Универсальный обработчик полей ввода
+  // Обработчик полей ввода (без изменений)
   const handleInputChange = (fieldName, value) => {
     setCharacter((prev) => ({
       ...prev,
@@ -30,14 +35,51 @@ function App() {
     }));
   };
 
-  // Валидация
+  // 🔥 НОВАЯ ФУНКЦИЯ: Случайная генерация персонажа
+  const generateRandomCharacter = () => {
+    // 1. Выбираем случайное имя, расу и класс из массивов
+    const randomName =
+      RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
+    const randomRace =
+      RANDOM_RACES[Math.floor(Math.random() * RANDOM_RACES.length)];
+    const randomClass =
+      RANDOM_CLASSES[Math.floor(Math.random() * RANDOM_CLASSES.length)];
+
+    // 2. Алгоритм случайного распределения 20 очков
+    const statsKeys = ["strength", "agility", "intelligence", "wisdom"];
+    // Начинаем с базовых 10 очков для каждого стата
+    const randomStats = {
+      strength: 10,
+      agility: 10,
+      intelligence: 10,
+      wisdom: 10,
+    };
+
+    // В цикле 20 раз кидаем "кубик" и добавляем по 1 очку в случайную характеристику
+    for (let i = 0; i < 20; i++) {
+      const randomStatName =
+        statsKeys[Math.floor(Math.random() * statsKeys.length)];
+      randomStats[randomStatName] += 1;
+    }
+
+    // 3. Записываем всё в стейт одним махом
+    setCharacter({
+      name: randomName,
+      race: randomRace,
+      class: randomClass,
+      stats: randomStats,
+      availablePoints: 0, // Все очки распределены!
+    });
+  };
+
+  // Валидация (без изменений)
   const isNameEmpty = character.name.trim() === "";
   const hasPointsLeft = character.availablePoints > 0;
   const isFormInvalid = isNameEmpty || hasPointsLeft;
 
   const handleSave = () => {
     if (isFormInvalid) return;
-    console.log("Персонаж успешно создан:", character);
+    console.log("Персона年 успешно создан:", character);
     setIsSavedModalOpen(true);
   };
 
@@ -101,7 +143,6 @@ function App() {
         {/* Блок распределения характеристик */}
         <div className="stats-container">
           {Object.keys(character.stats).map((stat) => {
-            // Заранее вычисляем, заблокированы ли кнопки логически
             const isMinusDisabled = character.stats[stat] <= 10;
             const isPlusDisabled = character.availablePoints === 0;
 
@@ -116,7 +157,6 @@ function App() {
                 </span>
 
                 <div className="stat-buttons">
-                  {/* Кнопка минус */}
                   <button
                     onClick={() => changeStat(stat, -1)}
                     style={{
@@ -127,7 +167,6 @@ function App() {
                   >
                     -
                   </button>
-                  {/* Кнопка плюс */}
                   <button
                     onClick={() => changeStat(stat, 1)}
                     style={{
@@ -145,12 +184,19 @@ function App() {
         </div>
 
         {/* Блок действий и валидации */}
-        <div className="actions-container" style={{ marginTop: "20px" }}>
+        <div
+          className="actions-container"
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
           <div
             className="validation-status"
             style={{
               color: isFormInvalid ? "#ff6b6b" : "#51cf66",
-              marginBottom: "10px",
               fontSize: "14px",
               fontWeight: "bold",
             }}
@@ -160,9 +206,26 @@ function App() {
               : "✅ Всё заполнено верно! Персонаж готов к созданию."}
           </div>
 
+          {/* 🔥 НОВАЯ КНОПКА: Рандомайзер */}
+          <button
+            onClick={generateRandomCharacter}
+            className="random-button"
+            style={{
+              backgroundColor: "#4dabf7",
+              color: "#fff",
+              padding: "10px",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            🎲 Случайная генерация
+          </button>
+
           <button
             onClick={handleSave}
-            disabled={isFormInvalid} // Эту главную кнопку оставляем disabled по ТЗ
+            disabled={isFormInvalid}
             className="save-button"
           >
             Сохранить персонажа
@@ -170,7 +233,7 @@ function App() {
         </div>
       </div>
 
-      {/* Модальное окно */}
+      {/* Модальное окно (без изменений) */}
       {isSavedModalOpen && (
         <div
           className="modal-overlay"
