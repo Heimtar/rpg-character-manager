@@ -1,10 +1,9 @@
-import { useState } from 'react';
-import { initialCharacterState } from './initialState';
-import './App.css';
+import { useState } from "react";
+import { initialCharacterState } from "./initialState";
+import "./App.css";
 
 function App() {
   const [character, setCharacter] = useState(initialCharacterState);
-  // Новый стейт для управления показом окошка об успешном сохранении
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
   // Изменение характеристик (без изменений)
@@ -30,22 +29,20 @@ function App() {
     }));
   };
 
-  // Проверки для валидации (разбили на отдельные переменные для точности подсказок)
-  const isNameEmpty = character.name.trim() === '';
+  // Валидация
+  const isNameEmpty = character.name.trim() === "";
   const hasPointsLeft = character.availablePoints > 0;
   const isFormInvalid = isNameEmpty || hasPointsLeft;
 
-  // Функция сохранения (без алертов)
   const handleSave = () => {
     if (isFormInvalid) return;
-    console.log('Персонаж успешно создан:', character);
-    setIsSavedModalOpen(true); // Открываем кастомное окошко успеха
+    console.log("Персонаж успешно создан:", character);
+    setIsSavedModalOpen(true);
   };
 
-  // Функция для сброса формы и закрытия окошка успеха
   const closeSuccessModal = () => {
     setIsSavedModalOpen(false);
-    setCharacter(initialCharacterState); // Сбрасываем форму для нового героя
+    setCharacter(initialCharacterState);
   };
 
   return (
@@ -53,16 +50,15 @@ function App() {
       <h1>Генератор Персонажа RPG</h1>
 
       <div className="creator-card">
-        
         {/* Ввод имени */}
         <div className="form-group name-group">
           <label htmlFor="char-name">✍️ Имя персонажа: </label>
-          <input 
+          <input
             id="char-name"
-            type="text" 
+            type="text"
             placeholder="Введите имя героя..."
             value={character.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
+            onChange={(e) => handleInputChange("name", e.target.value)}
           />
         </div>
 
@@ -70,10 +66,10 @@ function App() {
         <div className="dropdowns-container">
           <div className="form-group">
             <label htmlFor="race-select">🧬 Выберите расу: </label>
-            <select 
+            <select
               id="race-select"
               value={character.race}
-              onChange={(e) => handleInputChange('race', e.target.value)}
+              onChange={(e) => handleInputChange("race", e.target.value)}
             >
               <option value="human">Человек</option>
               <option value="elf">Эльф</option>
@@ -84,10 +80,10 @@ function App() {
 
           <div className="form-group">
             <label htmlFor="class-select">🛡️ Выберите класс: </label>
-            <select 
+            <select
               id="class-select"
               value={character.class}
-              onChange={(e) => handleInputChange('class', e.target.value)}
+              onChange={(e) => handleInputChange("class", e.target.value)}
             >
               <option value="warrior">Воин</option>
               <option value="mage">Маг</option>
@@ -106,13 +102,13 @@ function App() {
           {Object.keys(character.stats).map((stat) => (
             <div key={stat} className="stat-row">
               <span className="stat-label">
-                {stat === 'strength' && '⚔️ Сила'}
-                {stat === 'agility' && '🏹 Ловкость'}
-                {stat === 'intelligence' && '🔮 Интеллект'}
-                {stat === 'wisdom' && '📜 Мудрость'}
+                {stat === "strength" && "⚔️ Сила"}
+                {stat === "agility" && "🏹 Ловкость"}
+                {stat === "intelligence" && "🔮 Интеллект"}
+                {stat === "wisdom" && "📜 Мудрость"}
                 {` (${character.stats[stat]})`}
               </span>
-              
+
               <div className="stat-buttons">
                 <button onClick={() => changeStat(stat, -1)}>-</button>
                 <button onClick={() => changeStat(stat, 1)}>+</button>
@@ -121,17 +117,25 @@ function App() {
           ))}
         </div>
 
-        {/* Блок действий и валидации */}
-        <div className="actions-container" style={{ marginTop: '20px' }}>
-          {/* НОВАЯ ПОДСКАЗКА: Показывается только если форма не готова */}
-          {isFormInvalid && (
-            <div className="validation-warning" style={{ color: '#ff6b6b', marginBottom: '10px', fontSize: '14px', fontWeight: 'bold' }}>
-              ⚠️ Перед созданием персонажа введите имя и распределите все очки.
-            </div>
-          )}
+        {/* Блок действий и динамической валидации */}
+        <div className="actions-container" style={{ marginTop: "20px" }}>
+          {/* ИЗМЕНЕННЫЙ БЛОК: Текстовый статус валидации (Красный / Зеленый) */}
+          <div
+            className="validation-status"
+            style={{
+              color: isFormInvalid ? "#ff6b6b" : "#51cf66",
+              marginBottom: "10px",
+              fontSize: "14px",
+              fontWeight: "bold",
+            }}
+          >
+            {isFormInvalid
+              ? "⚠️ Перед созданием персонажа введите имя и распределите все очки."
+              : "✅ Всё заполнено верно! Персонаж готов к созданию."}
+          </div>
 
-          <button 
-            onClick={handleSave} 
+          <button
+            onClick={handleSave}
             disabled={isFormInvalid}
             className="save-button"
           >
@@ -140,25 +144,52 @@ function App() {
         </div>
       </div>
 
-      {/* НОВОЕ ОКОШКО (Модальное окно успешного сохранения) */}
+      {/* Модальное окно успешного сохранения */}
       {isSavedModalOpen && (
-        <div className="modal-overlay" style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
-        }}>
-          <div className="modal-content" style={{
-            backgroundColor: '#2a2a2a', padding: '30px', borderRadius: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-            textAlign: 'center', maxWidth: '400px', width: '90%', border: '1px solid #ffb13b'
-          }}>
-            <h2 style={{ color: '#ffb13b', marginTop: 0 }}>🎉 Герой создан!</h2>
-            <p style={{ fontSize: '18px', margin: '20px 0' }}>
-              Персонаж <strong>{character.name}</strong> успешно добавлен в вашу коллекцию.
+        <div
+          className="modal-overlay"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.7)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="modal-content"
+            style={{
+              backgroundColor: "#2a2a2a",
+              padding: "30px",
+              borderRadius: "10px",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
+              textAlign: "center",
+              maxWidth: "400px",
+              width: "90%",
+              border: "1px solid #ffb13b",
+            }}
+          >
+            <h2 style={{ color: "#ffb13b", marginTop: 0 }}>🎉 Герой создан!</h2>
+            <p style={{ fontSize: "18px", margin: "20px 0" }}>
+              Персонаж <strong>{character.name}</strong> успешно добавлен в вашу
+              коллекцию.
             </p>
-            <button 
+            <button
               onClick={closeSuccessModal}
               style={{
-                backgroundColor: '#ffb13b', color: '#000', border: 'none', padding: '10px 20px',
-                borderRadius: '5px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer'
+                backgroundColor: "#ffb13b",
+                color: "#000",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "5px",
+                fontSize: "16px",
+                fontWeight: "bold",
+                cursor: "pointer",
               }}
             >
               Отлично!
