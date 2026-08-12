@@ -47,11 +47,15 @@ h1 {
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Увеличиваем отступ, чтобы поиск не прилипал к селектам */
 }
 
+.search-container input[type="text"] {
+  width: 100%;
+  box-sizing: border-box; /* Теперь padding не распирает инпут наружу */
+}
 /* Поля ввода и формы */
 .form-group {
   display: flex;
@@ -126,8 +130,9 @@ select:focus {
   border: 1px solid transparent;
 }
 
-.stat-row:focus-within {
+.stat-row:hover {
   border-color: rgba(255, 177, 59, 0.3);
+  background-color: #161619; /* делаем строку чуть светлее при ховере */
 }
 
 .stat-label {
@@ -163,7 +168,11 @@ select:focus {
   background-color: #ffb13b;
   color: #121214;
   border-color: #ffb13b;
-  transform: scale(1.08);
+}
+
+/* Слегка увеличиваем сам символ внутри при ховере, центрирование не ломается */
+.stat-buttons button:hover:not([style*="opacity: 0.4"])::after {
+  transform: scale(1.1);
 }
 
 .stat-buttons button:focus-visible {
