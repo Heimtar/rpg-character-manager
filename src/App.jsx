@@ -90,6 +90,13 @@ function App() {
   const isNameEmpty = character.name.trim() === "";
   const hasPointsLeft = character.availablePoints > 0;
   const isFormInvalid = isNameEmpty || hasPointsLeft;
+  const RACE_BONUSES = {
+    human: { strength: 1, agility: 0, intelligence: 1, wisdom: 0 },
+    elf: { strength: 0, agility: 2, intelligence: 0, wisdom: 1 },
+    dwarf: { strength: 2, agility: 0, intelligence: 0, wisdom: 0 },
+    orc: { strength: 3, agility: 0, intelligence: -1, wisdom: 0 },
+  };
+  const currentRaceBonuses = RACE_BONUSES[character.race];
   const filteredLibrary = library.filter((hero) => {
     const matchesSearch = hero.name
       .toLowerCase()
@@ -103,8 +110,16 @@ function App() {
 
     const newCharacter = {
       ...character,
-      id: crypto.randomUUID(), // встроенный в браузер генератор ID
+      id: crypto.randomUUID(),
       createdAt: new Date().toLocaleDateString(),
+      // Перезаписываем статы, прибавляя к ним бонусы перед отправкой в библиотеку
+      stats: {
+        strength: character.stats.strength + currentRaceBonuses.strength,
+        agility: character.stats.agility + currentRaceBonuses.agility,
+        intelligence:
+          character.stats.intelligence + currentRaceBonuses.intelligence,
+        wisdom: character.stats.wisdom + currentRaceBonuses.wisdom,
+      },
     };
 
     setLibrary((prevLibrary) => [newCharacter, ...prevLibrary]);
@@ -196,7 +211,33 @@ function App() {
                   {stat === "agility" && "🏹 Ловкость"}
                   {stat === "intelligence" && "🔮 Интеллект"}
                   {stat === "wisdom" && "📜 Мудрость"}
-                  {` (${character.stats[stat]})`}
+
+                  {/* Выводим итоговую сумму: стат + бонус расы */}
+                  {` (${character.stats[stat] + currentRaceBonuses[stat]})`}
+
+                  {/* Если бонус больше нуля, пишем зелёным (+2), если меньше нуля — красным (-1) */}
+                  {currentRaceBonuses[stat] > 0 && (
+                    <span
+                      style={{
+                        color: "#51cf66",
+                        fontSize: "12px",
+                        marginLeft: "5px",
+                      }}
+                    >
+                      +{currentRaceBonuses[stat]} от расы
+                    </span>
+                  )}
+                  {currentRaceBonuses[stat] < 0 && (
+                    <span
+                      style={{
+                        color: "#ff6b6b",
+                        fontSize: "12px",
+                        marginLeft: "5px",
+                      }}
+                    >
+                      {currentRaceBonuses[stat]} от расы
+                    </span>
+                  )}
                 </span>
 
                 <div className="stat-buttons">
