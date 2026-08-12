@@ -1,42 +1,273 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* Базовые настройки страницы */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #121214;
+  color: #e1e1e6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  padding: 30px 20px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+h1 {
   text-align: center;
+  color: #ffb13b;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  text-shadow: 0 2px 10px rgba(255, 177, 59, 0.2);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Главная сетка приложения (Две колонки) */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-@keyframes logo-spin {
+/* На больших экранах делим интерфейс на 2 колонки */
+@media (min-width: 900px) {
+  .main-layout {
+    grid-template-columns: 400px 1fr;
+    align-items: start;
+  }
+}
+
+/* Общие стили для панелей (Карточка создателя и секция библиотеки) */
+.creator-card,
+.search-container,
+.character-card {
+  background-color: #1a1a1e;
+  border: 1px solid #29292e;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Поля ввода и формы */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #a8a8b3;
+}
+
+input[type="text"],
+select {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #29292e;
+  background-color: #121214;
+  color: #e1e1e6;
+  font-size: 15px;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+select:focus {
+  border-color: #ffb13b;
+  box-shadow: 0 0 0 2px rgba(255, 177, 59, 0.2);
+}
+
+/* Контейнер выпадающих списков в один ряд */
+.dropdowns-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Блок очков */
+.points-pool {
+  background: linear-gradient(90deg, #29292e 0%, #1a1a1e 100%);
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  margin: 20px 0;
+  border-left: 4px solid #ffb13b;
+}
+
+.points-pool h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #ffb13b;
+}
+
+/* Строки характеристик */
+.stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background-color: #121214;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.stat-row:focus-within {
+  border-color: rgba(255, 177, 59, 0.3);
+}
+
+.stat-label {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.stat-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Маленькие кнопки + и - */
+.stat-buttons button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #29292e;
+  background-color: #1a1a1e;
+  color: #e1e1e6;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.stat-buttons button:hover:not([style*="opacity: 0.4"]) {
+  background-color: #ffb13b;
+  color: #121214;
+  border-color: #ffb13b;
+  transform: scale(1.08);
+}
+
+.stat-buttons button:focus-visible {
+  outline: 2px solid #ffb13b;
+  outline-offset: 2px;
+}
+
+/* Статус валидации */
+.validation-status {
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  background-color: #121214;
+}
+
+/* Большие управляющие кнопки */
+.random-button,
+.save-button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.random-button {
+  background-color: #29292e;
+  color: #e1e1e6;
+  border: 1px solid #323238;
+}
+
+.random-button:hover {
+  background-color: #323238;
+  color: #ffb13b;
+}
+
+.save-button {
+  background-color: #ffb13b;
+  color: #121214;
+}
+
+.save-button:hover:not(:disabled) {
+  background-color: #ffa41c;
+  box-shadow: 0 4px 12px rgba(255, 177, 59, 0.3);
+}
+
+.save-button:disabled {
+  background-color: #29292e;
+  color: #7c7c8a;
+  cursor: not-allowed;
+}
+
+/* Секция Библиотеки */
+.library-section h2 {
+  margin-top: 0;
+  color: #e1e1e6;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #29292e;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+/* Сетка карточек персонажей */
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 20px !important;
+}
+
+.character-card {
+  border-left: 3px solid #ffb13b;
+}
+
+.character-card:hover {
+  border-color: #51cf66;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+.hero-stats-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Анимации для модального окна */
+.modal-overlay {
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleUp {
   from {
-    transform: rotate(0deg);
+    transform: scale(0.9);
+    opacity: 0;
   }
   to {
-    transform: rotate(360deg);
+    transform: scale(1);
+    opacity: 1;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }
