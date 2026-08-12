@@ -162,12 +162,18 @@ select:focus {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  outline: none;
 }
 
 .stat-buttons button:hover:not([style*="opacity: 0.4"]) {
   background-color: #ffb13b;
   color: #121214;
   border-color: #ffb13b;
+}
+
+.stat-buttons button:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 /* Слегка увеличиваем сам символ внутри при ховере, центрирование не ломается */
@@ -178,6 +184,8 @@ select:focus {
 .stat-buttons button:focus-visible {
   outline: 2px solid #ffb13b;
   outline-offset: 2px;
+  background-color: #ffb13b;
+  color: #121214;
 }
 
 /* Статус валидации */
