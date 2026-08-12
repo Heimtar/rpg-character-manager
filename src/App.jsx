@@ -18,6 +18,8 @@ function App() {
     return savedLibrary ? JSON.parse(savedLibrary) : initialLibraryState;
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterRace, setFilterRace] = useState("all"); // 'all' означает, что фильтр отключен
+  const [filterClass, setFilterClass] = useState("all");
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
   // Изменение характеристик
@@ -88,9 +90,14 @@ function App() {
   const isNameEmpty = character.name.trim() === "";
   const hasPointsLeft = character.availablePoints > 0;
   const isFormInvalid = isNameEmpty || hasPointsLeft;
-  const filteredLibrary = library.filter((hero) =>
-    hero.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredLibrary = library.filter((hero) => {
+    const matchesSearch = hero.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesRace = filterRace === "all" || hero.race === filterRace;
+    const matchesClass = filterClass === "all" || hero.class === filterClass;
+    return matchesSearch && matchesRace && matchesClass;
+  });
   const handleSave = () => {
     if (isFormInvalid) return;
 
@@ -285,6 +292,47 @@ function App() {
               color: "#fff",
             }}
           />
+          <div
+            className="filter-dropdowns"
+            style={{ display: "flex", gap: "10px" }}
+          >
+            <select
+              value={filterRace}
+              onChange={(e) => setFilterRace(e.target.value)}
+              style={{
+                flex: 1,
+                padding: "8px",
+                borderRadius: "5px",
+                border: "1px solid #444",
+                backgroundColor: "#1a1a1a",
+                color: "#fff",
+              }}
+            >
+              <option value="all">Все расы</option>
+              <option value="human">Человек</option>
+              <option value="elf">Эльф</option>
+              <option value="dwarf">Гном</option>
+              <option value="orc">Орк</option>
+            </select>
+
+            <select
+              value={filterClass}
+              onChange={(e) => setFilterClass(e.target.value)}
+              style={{
+                flex: 1,
+                padding: "8px",
+                borderRadius: "5px",
+                border: "1px solid #444",
+                backgroundColor: "#1a1a1a",
+                color: "#fff",
+              }}
+            >
+              <option value="all">Все классы</option>
+              <option value="warrior">Воин</option>
+              <option value="mage">Маг</option>
+              <option value="rogue">Плут</option>
+            </select>
+          </div>
         </div>
 
         {filteredLibrary.length === 0 ? (
