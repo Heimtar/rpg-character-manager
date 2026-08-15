@@ -7,6 +7,17 @@ import {
   RANDOM_CLASSES,
   initialLibraryState,
 } from "./initialState";
+import strengthIcon from "./assets/strength.jpg";
+import agilityIcon from "./assets/agility.jpg";
+import intelligenceIcon from "./assets/intelligence.jpg";
+import wisdomIcon from "./assets/wisdom.jpg";
+import nameIcon from "./assets/name.jpg";
+import raceIcon from "./assets/race.jpg";
+import classIcon from "./assets/class.jpg";
+import libraryIcon from "./assets/library.jpg";
+import diceIcon from "./assets/dice.jpg";
+import successIcon from "./assets/success.jpg";
+import warningIcon from "./assets/warning.jpg";
 import "./App.css";
 
 function App() {
@@ -24,7 +35,7 @@ function App() {
 
   // Изменение характеристик
   useEffect(() => {
-    // Превращаем массив библиотеки в строку и бережно сохраняем в браузер
+    // Превращаем массив библиотеки в строку и сохраняем в браузер
     localStorage.setItem("rpg_character_library", JSON.stringify(library));
   }, [library]); // Массив зависимостей: хук будет срабатывать каждый раз, когда меняется library
   const changeStat = (statName, amount) => {
@@ -41,7 +52,7 @@ function App() {
     }));
   };
 
-  // Обработчик полей ввода (без изменений)
+  // Обработчик полей ввода
   const handleInputChange = (fieldName, value) => {
     setCharacter((prev) => ({
       ...prev,
@@ -49,7 +60,7 @@ function App() {
     }));
   };
 
-  // 🔥 НОВАЯ ФУНКЦИЯ: Случайная генерация персонажа
+  // Случайная генерация персонажа
   const generateRandomCharacter = () => {
     // 1. Выбираем случайное имя, расу и класс из массивов
     const randomName =
@@ -76,17 +87,17 @@ function App() {
       randomStats[randomStatName] += 1;
     }
 
-    // 3. Записываем всё в стейт одним махом
+    // 3. Записываем всё в стейт
     setCharacter({
       name: randomName,
       race: randomRace,
       class: randomClass,
       stats: randomStats,
-      availablePoints: 0, // Все очки распределены!
+      availablePoints: 0, // Все очки распределены
     });
   };
 
-  // Валидация (без изменений)
+  // Валидация
   const isNameEmpty = character.name.trim() === "";
   const hasPointsLeft = character.availablePoints > 0;
   const isFormInvalid = isNameEmpty || hasPointsLeft;
@@ -153,7 +164,9 @@ function App() {
       <div className="creator-card">
         {/* Ввод имени */}
         <div className="form-group name-group">
-          <label htmlFor="char-name">✍️ Имя персонажа: </label>
+          <label htmlFor="char-name">
+            <img src={nameIcon} alt="" className="field-icon" /> Имя персонажа:
+          </label>
           <input
             id="char-name"
             type="text"
@@ -166,7 +179,10 @@ function App() {
         {/* Выбор Расы и Класса */}
         <div className="dropdowns-container">
           <div className="form-group">
-            <label htmlFor="race-select">🧬 Выберите расу: </label>
+            <label htmlFor="race-select">
+              <img src={raceIcon} alt="" className="field-icon" /> Выберите
+              расу:
+            </label>
             <select
               id="race-select"
               value={character.race}
@@ -180,7 +196,10 @@ function App() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="class-select">🛡️ Выберите класс: </label>
+            <label htmlFor="class-select">
+              <img src={classIcon} alt="" className="field-icon" /> Выберите
+              класс:
+            </label>
             <select
               id="class-select"
               value={character.class}
@@ -207,15 +226,43 @@ function App() {
             return (
               <div key={stat} className="stat-row">
                 <span className="stat-label">
-                  {stat === "strength" && "⚔️ Сила"}
-                  {stat === "agility" && "🏹 Ловкость"}
-                  {stat === "intelligence" && "🔮 Интеллект"}
-                  {stat === "wisdom" && "📜 Мудрость"}
+                  {stat === "strength" && (
+                    <img src={strengthIcon} alt="Сила" className="stat-icon" />
+                  )}
+                  {stat === "agility" && (
+                    <img
+                      src={agilityIcon}
+                      alt="Ловкость"
+                      className="stat-icon"
+                    />
+                  )}
+                  {stat === "intelligence" && (
+                    <img
+                      src={intelligenceIcon}
+                      alt="Интеллект"
+                      className="stat-icon"
+                    />
+                  )}
+                  {stat === "wisdom" && (
+                    <img
+                      src={wisdomIcon}
+                      alt="Мудрость"
+                      className="stat-icon"
+                    />
+                  )}
+
+                  {/* Названия характеристик */}
+                  <span className="stat-name">
+                    {stat === "strength" && "Сила"}
+                    {stat === "agility" && "Ловкость"}
+                    {stat === "intelligence" && "Интеллект"}
+                    {stat === "wisdom" && "Мудрость"}
+                  </span>
 
                   {/* Выводим итоговую сумму: стат + бонус расы */}
                   {` (${character.stats[stat] + currentRaceBonuses[stat]})`}
 
-                  {/* Если бонус больше нуля, пишем зелёным (+2), если меньше нуля — красным (-1) */}
+                  {/* Расовые бонусы */}
                   {currentRaceBonuses[stat] > 0 && (
                     <span
                       style={{
@@ -285,12 +332,22 @@ function App() {
               fontWeight: "bold",
             }}
           >
-            {isFormInvalid
-              ? "⚠️ Перед созданием персонажа введите имя и распределите все очки."
-              : "✅ Всё заполнено верно! Персонаж готов к созданию."}
+            {isFormInvalid ? (
+              <>
+                <img src={warningIcon} alt="" className="status-icon" />
+                <span>
+                  Перед созданием персонажа введите имя и распределите все очки.
+                </span>
+              </>
+            ) : (
+              <>
+                <img src={successIcon} alt="" className="status-icon" />
+                <span>Всё заполнено верно! Персонаж готов к созданию.</span>
+              </>
+            )}
           </div>
 
-          {/* 🔥 НОВАЯ КНОПКА: Рандомайзер */}
+          {/* Рандомайзер */}
           <button
             onClick={generateRandomCharacter}
             className="random-button"
@@ -304,7 +361,8 @@ function App() {
               fontWeight: "bold",
             }}
           >
-            🎲 Случайная генерация
+            <img src={diceIcon} alt="" className="button-icon" />
+            Случайная генерация
           </button>
 
           <button
@@ -317,7 +375,10 @@ function App() {
         </div>
       </div>
       <div className="library-section" style={{ marginTop: "40px" }}>
-        <h2>📚 Библиотека персонажей ({library.length})</h2>
+        <h2 className="library-title">
+          <img src={libraryIcon} alt="" className="title-icon" />
+          Библиотека персонажей ({library.length})
+        </h2>
         <div className="search-container" style={{ marginBottom: "20px" }}>
           <input
             type="text"
@@ -422,10 +483,38 @@ function App() {
                     fontSize: "13px",
                   }}
                 >
-                  <div>⚔️ Сил: {hero.stats.strength}</div>
-                  <div>🏹 Лов: {hero.stats.agility}</div>
-                  <div>🔮 Инт: {hero.stats.intelligence}</div>
-                  <div>📜 Муд: {hero.stats.wisdom}</div>
+                  <div className="library-stat-item">
+                    <img
+                      src={strengthIcon}
+                      alt="Сила"
+                      className="library-stat-icon"
+                    />
+                    <span>Сил: {hero.stats.strength}</span>
+                  </div>
+                  <div className="library-stat-item">
+                    <img
+                      src={agilityIcon}
+                      alt="Ловкость"
+                      className="library-stat-icon"
+                    />
+                    <span>Лов: {hero.stats.agility}</span>
+                  </div>
+                  <div className="library-stat-item">
+                    <img
+                      src={intelligenceIcon}
+                      alt="Интеллект"
+                      className="library-stat-icon"
+                    />
+                    <span>Инт: {hero.stats.intelligence}</span>
+                  </div>
+                  <div className="library-stat-item">
+                    <img
+                      src={wisdomIcon}
+                      alt="Мудрость"
+                      className="library-stat-icon"
+                    />
+                    <span>Муд: {hero.stats.wisdom}</span>
+                  </div>
                 </div>
 
                 <div
@@ -460,7 +549,7 @@ function App() {
         )}
       </div>
 
-      {/* Модальное окно (без изменений) */}
+      {/* Модальное окно */}
       {isSavedModalOpen && (
         <div
           className="modal-overlay"

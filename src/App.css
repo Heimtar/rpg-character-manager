@@ -2,7 +2,14 @@
 body {
   margin: 0;
   font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: #121214;
+  background-image:
+    linear-gradient(rgba(18, 18, 20, 0.85), rgba(18, 18, 20, 0.85)),
+    url("./assets/background.jpg");
+  background-attachment: fixed;
+  /* Растягиваем картинку на весь экран без искажений */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #e1e1e6;
   -webkit-font-smoothing: antialiased;
 }
@@ -56,7 +63,7 @@ h1 {
 
 .search-container input[type="text"] {
   width: 100%;
-  box-sizing: border-box; /* Теперь padding не распирает инпут наружу */
+  box-sizing: border-box;
 }
 /* Поля ввода и формы */
 .form-group {
@@ -280,6 +287,29 @@ select:focus {
   animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Стили для новых иконок характеристик */
+.stat-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  margin-right: 8px; /* Отступ от картинки до текста */
+  vertical-align: middle; /* Выравнивание по центру текстовой строки */
+}
+
+.stat-name {
+  font-weight: 500;
+}
+.library-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Отступ между иконкой и текстом внутри элемента */
+}
+
+.library-stat-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
 @keyframes scaleUp {
   from {
     transform: scale(0.9);
@@ -289,4 +319,46 @@ select:focus {
     transform: scale(1);
     opacity: 1;
   }
+}
+/* Иконки полей ввода формы */
+.field-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 6px;
+  display: inline-block;
+}
+
+/* Специфичное выравнивание текста лейбла, чтобы картинка стояла ровно */
+.form-group label {
+  display: flex;
+  align-items: center;
+}
+
+/* Иконка в заголовке библиотеки */
+.library-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.title-icon {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+.status-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0; /* Защита от сжатия картинки, если текст перенесется */
+}
+
+/* Иконка игрального кубика на кнопке */
+.button-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
 }
